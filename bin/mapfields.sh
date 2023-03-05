@@ -3,6 +3,9 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+shellscript=$(readlink -f "${0}")
+mapping="$shellscript/../mapping/"
+
 echo ${DEBUG:-} | grep  true  && set -x
 
 survey="2022 Player Registration V2.csv"
@@ -30,7 +33,7 @@ function writecsv()
 	# Write the csv file according to the header
 	local file=$1
 	local output=$file.csv
-	local fieldfile=$file.fields
+	local fieldfile=$mapping/$file.fields
 	local buildline=""
 	# Does the file exist, then assume it contains the header
 	[[ ! -f $output ]] && cat $fieldfile > $output
@@ -99,9 +102,9 @@ echo Agreement: $Agreement
 }
 
 
-header signedf $signedfields
-header surveyf $surveyfields
-header partf $partfields
+header signedf $mapping/$signedfields
+header surveyf $mapping/$surveyfields
+header partf $mapping/$partfields
 
 rm itc.csv missing missing.emails housing.csv missing.csv 2>/dev/null || true
 
